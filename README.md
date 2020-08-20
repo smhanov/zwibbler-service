@@ -13,7 +13,7 @@ Edit /etc/zwibbler.conf and change it:
     CertFile=
     KeyFile=
 
-Change CertFile and KeyFile to be the path to your SSL certificate information on the system.
+Change CertFile and KeyFile to be the path to your SSL certificate information on the system. CertFile is your certificate, and KeyFile is your private key.
 
 Next, restart the service using
 
