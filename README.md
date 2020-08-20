@@ -1,5 +1,4 @@
-# zwibbler-service
-Installers for Zwibbler Collaboration Server
+# Installers for Zwibbler Collaboration Server
 
 This project packages the zwibserve collaboration server as a system service that you can install on Linux.
 
@@ -18,10 +17,21 @@ Change CertFile and KeyFile to be the path to your SSL certificate information o
 
 Next, restart the service using
 
-    systemctl zwibbler restart
+    systemctl restart zwibbler
 
 You can view the logs using
 
     sudo tail -f /var/log/zwibbler/zwibbler.log
 
 You should now be able to test using https://zwibbler.com/collaboration and entering wss://yourserver/socket in the URL with no port.
+
+## Building
+To build, you need to have installed:
+
+* make
+* go
+* fpm https://fpm.readthedocs.io/en/latest/installing.html
+
+## Structure
+It is just a project that pulls in go modules from other places and connects them together. It pulls in the main zwibserve collaboration code from https://github.com/smhanov/zwibserve and go code to run a system service and provide logging. Then I use a Makefile to tell fpm to create an installer.
+
