@@ -1,6 +1,6 @@
 # Installers for Zwibbler Collaboration Server
 
-This project packages the zwibserve collaboration server as a system service that you can install on Linux.
+This project packages the Zwibbler Collaboration Server as a system service that you can install on Linux.
 
 Please refer to the instructions at https://github.com/smhanov/zwibserve, which also includes the link to the installers.
 
