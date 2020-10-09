@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/kardianos/service"
 	"github.com/smhanov/zwibserve"
@@ -19,7 +20,23 @@ func (p *program) run() {
 	if err != nil {
 		log.Panic(err)
 	}
-	http.Handle("/socket", zwibserve.NewHandler(zwibserve.NewSQLITEDB("/var/lib/zwibbler.db")))
+
+	err = os.MkdirAll("/var/lib/zwibbler", 0776)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	db := zwibserve.NewSQLITEDB("/var/lib/zwibbler/zwibbler.db")
+	if config.expiration == 0 {
+		log.Printf("Set document expiration to 24 hours (default)")
+	} else if config.expiration == zwibserve.NoExpiration {
+		log.Printf("Set expiration to NEVER")
+	} else {
+		log.Printf("Set expiration to %d seconds", config.expiration)
+	}
+	db.SetExpiration(config.expiration)
+
+	http.Handle("/socket", zwibserve.NewHandler(db))
 	bind := fmt.Sprintf("%s:%d", config.bindAddress, config.port)
 
 	p.server = &http.Server{

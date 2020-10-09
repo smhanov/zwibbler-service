@@ -9,6 +9,8 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+
+	"github.com/smhanov/zwibserve"
 )
 
 type configFile struct {
@@ -16,6 +18,7 @@ type configFile struct {
 	port        int
 	certFile    string
 	keyFile     string
+	expiration  int64
 }
 
 func readConfFile() (configFile, error) {
@@ -56,6 +59,13 @@ func readConfFile() (configFile, error) {
 				config.certFile = value
 			} else if key == "KeyFile" {
 				config.keyFile = value
+			} else if key == "Expiration" {
+				value = strings.ToLower(value)
+				if value == "never" {
+					config.expiration = zwibserve.NoExpiration
+				} else {
+					config.expiration, _ = strconv.ParseInt(value, 10, 64)
+				}
 			}
 		}
 	}
