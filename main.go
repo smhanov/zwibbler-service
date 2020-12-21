@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
+	"runtime"
 	"strings"
 
 	"github.com/kardianos/service"
@@ -46,6 +48,11 @@ func main() {
 
 	if uninstall {
 		log.Printf("Uninstalling service.")
+		if status, _ := s.Status(); status == service.StatusRunning {
+			log.Printf("Stopping service.")
+			err = s.Stop()
+		}
+
 		err = s.Uninstall()
 		if err != nil {
 			log.Printf("Error uninstalling: %v", err)
@@ -59,6 +66,11 @@ func main() {
 
 	if !install && !uninstall {
 		serverLog := "/var/log/zwibbler/zwibbler.log"
+		if runtime.GOOS == "windows" {
+			serverLog = "\\zwibbler\\zwibbler.log"
+			os.MkdirAll("\\zwibbler", 0776)
+		}
+
 		logger := newLogFile(serverLog)
 		log.SetOutput(logger)
 

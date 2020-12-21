@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"runtime"
 
 	"github.com/kardianos/service"
 	"github.com/smhanov/zwibserve"
@@ -21,12 +22,19 @@ func (p *program) run() {
 		log.Panic(err)
 	}
 
-	err = os.MkdirAll("/var/lib/zwibbler", 0776)
+	var dbpath = "/var/lib/zwibbler/"
+	if runtime.GOOS == "windows" {
+		dbpath = "\\zwibbler\\"
+	}
+
+	err = os.MkdirAll(dbpath, 0776)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	db := zwibserve.NewSQLITEDB("/var/lib/zwibbler/zwibbler.db")
+	log.Printf("Database path is %s", dbpath+"zwibbler.db")
+
+	db := zwibserve.NewSQLITEDB(dbpath + "zwibbler.db")
 	if config.expiration == 0 {
 		log.Printf("Set document expiration to 24 hours (default)")
 	} else if config.expiration == zwibserve.NoExpiration {

@@ -4,8 +4,6 @@ import (
 	"bufio"
 	"log"
 	"os"
-	"path"
-	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
@@ -21,6 +19,13 @@ type configFile struct {
 	expiration  int64
 }
 
+func fileExists(path string) bool {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
 func readConfFile() (configFile, error) {
 	var config configFile
 	config.bindAddress = "0.0.0.0"
@@ -28,9 +33,10 @@ func readConfFile() (configFile, error) {
 
 	confPath := "/etc/zwibbler.conf"
 	if runtime.GOOS == "windows" {
-		dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
-		confPath = path.Join(dir, "zwibbler.conf")
+		confPath = "\\zwibbler\\zwibbler.conf"
 	}
+
+	log.Printf("Reading configuration file %s", confPath)
 
 	// read file,
 	file, err := os.Open(confPath)
@@ -56,8 +62,14 @@ func readConfFile() (configFile, error) {
 			} else if key == "ServerBindAddress" {
 				config.bindAddress = value
 			} else if key == "CertFile" {
+				if value != "" && runtime.GOOS == "windows" && fileExists("\\zwibbler\\"+value) {
+					value = "\\zwibbler\\" + value
+				}
 				config.certFile = value
 			} else if key == "KeyFile" {
+				if value != "" && runtime.GOOS == "windows" && fileExists("\\zwibbler\\"+value) {
+					value = "\\zwibbler\\" + value
+				}
 				config.keyFile = value
 			} else if key == "Expiration" {
 				value = strings.ToLower(value)
