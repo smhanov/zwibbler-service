@@ -8,6 +8,7 @@ import (
 	"os"
 	"runtime"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/kardianos/service"
 	"github.com/smhanov/zwibserve"
 )
@@ -32,9 +33,20 @@ func (p *program) run() {
 		log.Panic(err)
 	}
 
-	log.Printf("Database path is %s", dbpath+"zwibbler.db")
+	var db zwibserve.DocumentDB
 
-	db := zwibserve.NewSQLITEDB(dbpath + "zwibbler.db")
+	switch config.database {
+	case "sqlite":
+		log.Printf("Database path is %s", dbpath+"zwibbler.db")
+		db = zwibserve.NewSQLITEDB(dbpath + "zwibbler.db")
+	case "redis":
+		log.Printf("Using Redis DB %s", config.redisServer)
+		db = zwibserve.NewRedisDB(&redis.Options{
+			Addr:     config.redisServer,
+			Password: config.redisPassword,
+		})
+	}
+
 	if config.expiration == 0 {
 		log.Printf("Set document expiration to 24 hours (default)")
 	} else if config.expiration == zwibserve.NoExpiration {

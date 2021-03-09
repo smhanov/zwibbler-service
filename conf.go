@@ -17,6 +17,14 @@ type configFile struct {
 	certFile    string
 	keyFile     string
 	expiration  int64
+
+	// default: sqlite
+	// can be redis
+	database string
+
+	// default: localhost:6379
+	redisServer   string
+	redisPassword string
 }
 
 func fileExists(path string) bool {
@@ -30,6 +38,8 @@ func readConfFile() (configFile, error) {
 	var config configFile
 	config.bindAddress = "0.0.0.0"
 	config.port = 3000
+	config.database = "sqlite"
+	config.redisServer = "localhost:6379"
 
 	confPath := "/etc/zwibbler.conf"
 	if runtime.GOOS == "windows" {
@@ -56,28 +66,42 @@ func readConfFile() (configFile, error) {
 		if len(line) == 2 {
 			key := strings.TrimSpace(line[0])
 			value := strings.TrimSpace(line[1])
-			if key == "ServerPort" {
+			switch key {
+			case "ServerPort":
 				i, _ := strconv.ParseInt(value, 10, 32)
 				config.port = int(i)
-			} else if key == "ServerBindAddress" {
+
+			case "ServerBindAddress":
 				config.bindAddress = value
-			} else if key == "CertFile" {
+
+			case "CertFile":
 				if value != "" && runtime.GOOS == "windows" && fileExists("\\zwibbler\\"+value) {
 					value = "\\zwibbler\\" + value
 				}
 				config.certFile = value
-			} else if key == "KeyFile" {
+			case "KeyFile":
 				if value != "" && runtime.GOOS == "windows" && fileExists("\\zwibbler\\"+value) {
 					value = "\\zwibbler\\" + value
 				}
 				config.keyFile = value
-			} else if key == "Expiration" {
+			case "Expiration":
 				value = strings.ToLower(value)
 				if value == "never" {
 					config.expiration = zwibserve.NoExpiration
 				} else {
 					config.expiration, _ = strconv.ParseInt(value, 10, 64)
 				}
+			case "Database":
+				switch value {
+				case "redis", "sqlite":
+					config.database = value
+				default:
+					log.Printf("Error: Unknown database type %s, must be redis,sqlite", value)
+				}
+			case "RedisServer":
+				config.redisServer = value
+			case "RedisPassword":
+				config.redisPassword = value
 			}
 		}
 	}
