@@ -56,7 +56,12 @@ func (p *program) run() {
 	}
 	db.SetExpiration(config.expiration)
 
-	http.Handle("/socket", zwibserve.NewHandler(db))
+	handler := zwibserve.NewHandler(db)
+
+	log.Printf("Socket compression allowed: %v", config.compression)
+	handler.SetCompressionAllowed(config.compression)
+
+	http.Handle("/socket", handler)
 	bind := fmt.Sprintf("%s:%d", config.bindAddress, config.port)
 
 	p.server = &http.Server{

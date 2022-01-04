@@ -17,6 +17,7 @@ type configFile struct {
 	certFile    string
 	keyFile     string
 	expiration  int64
+	compression bool
 
 	// default: sqlite
 	// can be redis
@@ -40,6 +41,7 @@ func readConfFile() (configFile, error) {
 	config.port = 3000
 	config.database = "sqlite"
 	config.redisServer = "localhost:6379"
+	config.compression = true
 
 	confPath := "/etc/zwibbler.conf"
 	if runtime.GOOS == "windows" {
@@ -102,6 +104,9 @@ func readConfFile() (configFile, error) {
 				config.redisServer = value
 			case "RedisPassword":
 				config.redisPassword = value
+			case "Compression" :
+				value = strings.ToLower(value)
+				config.compression = value != "0" && value != "false" && value != "off"
 			}
 		}
 	}

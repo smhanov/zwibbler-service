@@ -1,5 +1,5 @@
 
-VERSION := 4.0
+VERSION := 5.0
 NAME := zwibbler_$(VERSION)
 
 RPM_NAME := zwibbler-$(VERSION)-1.x86_64.rpm
