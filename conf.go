@@ -26,6 +26,11 @@ type configFile struct {
 	// default: localhost:6379
 	redisServer   string
 	redisPassword string
+
+	secretUser     string
+	secretPassword string
+
+	webhookURL string
 }
 
 func fileExists(path string) bool {
@@ -104,9 +109,15 @@ func readConfFile() (configFile, error) {
 				config.redisServer = value
 			case "RedisPassword":
 				config.redisPassword = value
-			case "Compression" :
+			case "Compression":
 				value = strings.ToLower(value)
 				config.compression = value != "0" && value != "false" && value != "off"
+			case "SecretUser":
+				config.secretUser = value
+			case "SecretPassword":
+				config.secretPassword = value
+			case "Webhook":
+				config.webhookURL = value
 			}
 		}
 	}

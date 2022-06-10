@@ -61,6 +61,14 @@ func (p *program) run() {
 	log.Printf("Socket compression allowed: %v", config.compression)
 	handler.SetCompressionAllowed(config.compression)
 
+	if config.secretUser != "" || config.secretPassword != "" {
+		log.Printf("Secret user specified. Managment API will be enabled.")
+		handler.SetSecretUser(config.secretUser, config.secretPassword)
+	}
+
+	log.Printf("Webhook URL: %v", config.webhookURL)
+	handler.SetWebhookURL(config.webhookURL)
+
 	http.Handle("/socket", handler)
 	bind := fmt.Sprintf("%s:%d", config.bindAddress, config.port)
 

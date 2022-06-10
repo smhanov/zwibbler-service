@@ -33,7 +33,7 @@ func main() {
 	if install {
 		log.Printf("Installing service.")
 		err = s.Install()
-		if err != nil && strings.Index(err.Error(), "already exists") < 0 {
+		if err != nil && !strings.Contains(err.Error(), "already exists") {
 			log.Panic(err)
 		}
 
@@ -51,6 +51,9 @@ func main() {
 		if status, _ := s.Status(); status == service.StatusRunning {
 			log.Printf("Stopping service.")
 			err = s.Stop()
+			if err != nil {
+				log.Printf("Error stopping: %v", err)
+			}
 		}
 
 		err = s.Uninstall()
