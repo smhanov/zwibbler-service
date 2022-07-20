@@ -33,6 +33,10 @@ func (p *program) run() {
 		log.Panic(err)
 	}
 
+	if config.maxFiles > 0 {
+		setMaxFiles(int(config.maxFiles))
+	}
+
 	var db zwibserve.DocumentDB
 
 	switch config.database {

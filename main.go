@@ -8,9 +8,39 @@ import (
 	"strings"
 
 	"github.com/kardianos/service"
+	"github.com/smhanov/zwibserve"
 )
 
 func main() {
+	var install bool
+	var uninstall bool
+	var test string
+	var teachers int
+	var students int
+	var doc string
+	var verbose bool
+
+	flag.BoolVar(&install, "install", false, "Install")
+	flag.BoolVar(&uninstall, "uninstall", false, "Uninstall")
+	flag.StringVar(&test, "test", "", "Give wss:// url of another server to stress test")
+	flag.StringVar(&doc, "docid", "", "Document ID for stress test")
+	flag.IntVar(&teachers, "teachers", 0, "Number of teachers for stress test")
+	flag.IntVar(&students, "students", 0, "Number of students for stress test")
+	flag.BoolVar(&verbose, "verbose", false, "Verbose server")
+	flag.Parse()
+
+	if test != "" {
+		// run a stress test
+		zwibserve.RunStressTest(zwibserve.StressTestArgs{
+			Address:     test,
+			NumTeachers: teachers,
+			NumStudents: students,
+			Verbose:     verbose,
+		})
+
+		return
+	}
+
 	svcConfig := &service.Config{
 		Name:        "zwibbler",
 		DisplayName: "Zwibbler Collaboration Service",
@@ -22,13 +52,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	var install bool
-	var uninstall bool
-
-	flag.BoolVar(&install, "install", false, "Install")
-	flag.BoolVar(&uninstall, "uninstall", false, "Uninstall")
-	flag.Parse()
 
 	if install {
 		log.Printf("Installing service.")

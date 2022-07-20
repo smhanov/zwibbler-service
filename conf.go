@@ -31,6 +31,8 @@ type configFile struct {
 	secretPassword string
 
 	webhookURL string
+
+	maxFiles int64
 }
 
 func fileExists(path string) bool {
@@ -118,6 +120,8 @@ func readConfFile() (configFile, error) {
 				config.secretPassword = value
 			case "Webhook":
 				config.webhookURL = value
+			case "MaxFiles":
+				config.maxFiles, _ = strconv.ParseInt(value, 10, 64)
 			}
 		}
 	}
