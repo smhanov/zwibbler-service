@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"runtime"
@@ -30,11 +31,21 @@ func main() {
 	flag.Parse()
 
 	if test != "" {
+		if doc == "" {
+			fmt.Printf("Error: You must specify the document id using --docid")
+			return
+		}
+		if teachers == 0 && students == 0 {
+			fmt.Printf("Error: You must specify non-zero --teachers or --students")
+			return
+		}
+
 		// run a stress test
 		zwibserve.RunStressTest(zwibserve.StressTestArgs{
 			Address:     test,
 			NumTeachers: teachers,
 			NumStudents: students,
+			DocumentID: doc,
 			Verbose:     verbose,
 		})
 
