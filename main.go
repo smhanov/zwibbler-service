@@ -45,7 +45,7 @@ func main() {
 			Address:     test,
 			NumTeachers: teachers,
 			NumStudents: students,
-			DocumentID: doc,
+			DocumentID:  doc,
 			Verbose:     verbose,
 		})
 
