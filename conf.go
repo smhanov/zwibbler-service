@@ -30,6 +30,9 @@ type configFile struct {
 	secretUser     string
 	secretPassword string
 
+	jwtKey         string
+	jwtKeyIsBase64 bool
+
 	webhookURL string
 
 	maxFiles int64
@@ -67,14 +70,16 @@ func readConfFile() (configFile, error) {
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		line := strings.Split(scanner.Text(), "=")
-		if strings.HasPrefix(line[0], "#") {
+
+		line := strings.TrimSpace(scanner.Text())
+		if strings.HasPrefix(line, "#") {
 			continue
 		}
 
-		if len(line) == 2 {
-			key := strings.TrimSpace(line[0])
-			value := strings.TrimSpace(line[1])
+		equals := strings.Index(line, "=")
+		if equals >= 0 {
+			key := strings.TrimSpace(line[:equals])
+			value := strings.TrimSpace(line[equals+1:])
 			switch key {
 			case "ServerPort":
 				i, _ := strconv.ParseInt(value, 10, 32)
@@ -113,11 +118,15 @@ func readConfFile() (configFile, error) {
 				config.redisPassword = value
 			case "Compression":
 				value = strings.ToLower(value)
-				config.compression = value != "0" && value != "false" && value != "off"
+				config.compression = isTrue(value)
 			case "SecretUser":
 				config.secretUser = value
 			case "SecretPassword":
 				config.secretPassword = value
+			case "JWTKey":
+				config.jwtKey = value
+			case "JWTKeyIsBase64":
+				config.jwtKeyIsBase64 = isTrue(value)
 			case "Webhook":
 				config.webhookURL = value
 			case "MaxFiles":
@@ -127,4 +136,9 @@ func readConfFile() (configFile, error) {
 	}
 
 	return config, nil
+}
+
+func isTrue(value string) bool {
+	value = strings.ToLower(value)
+	return value != "0" && value != "false" && value != "off"
 }

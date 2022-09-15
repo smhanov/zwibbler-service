@@ -9,7 +9,7 @@ To build on Linux, you need to have installed:
 
 * make
 * [go](https://golang.org/)
-* [fpm](https://fpm.readthedocs.io/en/latest/installing.html)
+* [fpm](https://fpm.readthedocs.io/en/latest/installation.html)
 
 To build on Windows, type "make.bat" from a command prompt. You need:
 

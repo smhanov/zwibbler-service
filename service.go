@@ -70,6 +70,11 @@ func (p *program) run() {
 		handler.SetSecretUser(config.secretUser, config.secretPassword)
 	}
 
+	if config.jwtKey != "" {
+		log.Printf("JWTKey specified. Only JWT will be accepted from clients.")
+		handler.SetJWTKey(config.jwtKey, config.jwtKeyIsBase64)
+	}
+
 	log.Printf("Webhook URL: %v", config.webhookURL)
 	handler.SetWebhookURL(config.webhookURL)
 
