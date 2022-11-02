@@ -7,5 +7,5 @@ require (
 	github.com/jmoiron/sqlx v1.3.1 // indirect
 	github.com/kardianos/service v1.1.0
 	github.com/mattn/go-sqlite3 v1.14.15 // indirect
-	github.com/smhanov/zwibserve v0.0.0-20220915141925-9132c19b16e5
+	github.com/smhanov/zwibserve v0.0.0-20221102195049-cfa8089a8006
 )
