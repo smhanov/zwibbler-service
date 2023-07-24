@@ -34,6 +34,7 @@ type configFile struct {
 	jwtKeyIsBase64 bool
 
 	webhookURL string
+	swarmUrls  []string
 
 	maxFiles int64
 }
@@ -131,6 +132,10 @@ func readConfFile() (configFile, error) {
 				config.webhookURL = value
 			case "MaxFiles":
 				config.maxFiles, _ = strconv.ParseInt(value, 10, 64)
+			case "SwarmURL":
+				if len(value) > 0 {
+					config.swarmUrls = append(config.swarmUrls, value)
+				}
 			}
 		}
 	}

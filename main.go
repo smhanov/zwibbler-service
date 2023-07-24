@@ -12,6 +12,8 @@ import (
 	"github.com/smhanov/zwibserve"
 )
 
+var overridePort int
+
 func main() {
 	var install bool
 	var uninstall bool
@@ -28,6 +30,7 @@ func main() {
 	flag.IntVar(&teachers, "teachers", 0, "Number of teachers for stress test")
 	flag.IntVar(&students, "students", 0, "Number of students for stress test")
 	flag.BoolVar(&verbose, "verbose", false, "Verbose server")
+	flag.IntVar(&overridePort, "port", 0, "Override port")
 	flag.Parse()
 
 	if test != "" {

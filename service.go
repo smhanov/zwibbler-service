@@ -23,6 +23,10 @@ func (p *program) run() {
 		log.Panic(err)
 	}
 
+	if overridePort != 0 {
+		config.port = overridePort
+	}
+
 	var dbpath = "/var/lib/zwibbler/"
 	if runtime.GOOS == "windows" {
 		dbpath = "\\zwibbler\\"
@@ -74,6 +78,8 @@ func (p *program) run() {
 		log.Printf("JWTKey specified. Only JWT will be accepted from clients.")
 		handler.SetJWTKey(config.jwtKey, config.jwtKeyIsBase64)
 	}
+
+	handler.SetSwarmURLs(config.swarmUrls)
 
 	log.Printf("Webhook URL: %v", config.webhookURL)
 	handler.SetWebhookURL(config.webhookURL)

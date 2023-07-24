@@ -1,11 +1,14 @@
 
-VERSION := 9.0
+VERSION := 10.0
 NAME := zwibbler_$(VERSION)
 
 RPM_NAME := zwibbler-$(VERSION)-1.x86_64.rpm
 
 zwibbler: *.go
-	go build
+	go build -tags "$(TAGS)"
+
+hae: *.go zwibserve/*.go
+	make TAGS=hae
 
 $(NAME)_amd64.deb: zwibbler *.sh
 	-rm $(NAME)_amd64.deb
@@ -25,7 +28,8 @@ $(RPM_NAME): zwibbler
 	-s dir \
 	./zwibbler=/usr/bin/zwibbler ./zwibbler.conf=/etc/zwibbler.conf
 
-
 deb: $(NAME)_amd64.deb
 rpm: $(RPM_NAME)
 
+clean:
+	-rm $(NAME)_amd64.deb $(RPM_NAME) zwibbler

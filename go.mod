@@ -3,9 +3,10 @@ module zwibbler.com/zwibbler
 go 1.14
 
 require (
-	github.com/go-redis/redis/v8 v8.7.1
-	github.com/jmoiron/sqlx v1.3.1 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
+	github.com/go-redis/redis/v8 v8.11.5
+	github.com/golang-jwt/jwt/v4 v4.4.3
+	github.com/gorilla/websocket v1.5.0
 	github.com/kardianos/service v1.1.0
-	github.com/mattn/go-sqlite3 v1.14.15 // indirect
-	github.com/smhanov/zwibserve v0.0.0-20221102195049-cfa8089a8006
+	github.com/smhanov/zwibserve v0.0.0-20230721142608-8dee93fd63ca
 )
