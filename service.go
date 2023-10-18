@@ -8,7 +8,7 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/go-redis/redis/v9"
 	"github.com/kardianos/service"
 	"github.com/smhanov/zwibserve"
 )
@@ -48,11 +48,22 @@ func (p *program) run() {
 		log.Printf("Database path is %s", dbpath+"zwibbler.db")
 		db = zwibserve.NewSQLITEDB(dbpath + "zwibbler.db")
 	case "redis":
-		log.Printf("Using Redis DB %s", config.redisServer)
+		log.Printf("Using Redis DB %s", config.redisServers)
 		db = zwibserve.NewRedisDB(&redis.Options{
-			Addr:     config.redisServer,
+			Addr:     config.redisServers[0],
 			Password: config.redisPassword,
 		})
+	case "redis-cluster":
+		log.Printf("Using Redis Cluster DB %v", config.redisServers)
+		db = zwibserve.NewRedisClusterDB(&redis.ClusterOptions{
+			Addrs:    config.redisServers,
+			Password: config.redisPassword,
+		})
+	}
+
+	if lostWriteRate > 0 {
+		log.Printf("Simulating unreliable database with 1 in %d chance of silently dropping the write", lostWriteRate)
+		db = createUnreliableDB(db, lostWriteRate)
 	}
 
 	if config.expiration == 0 {

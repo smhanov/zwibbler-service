@@ -13,6 +13,7 @@ import (
 )
 
 var overridePort int
+var lostWriteRate int
 
 func main() {
 	var install bool
@@ -31,6 +32,7 @@ func main() {
 	flag.IntVar(&students, "students", 0, "Number of students for stress test")
 	flag.BoolVar(&verbose, "verbose", false, "Verbose server")
 	flag.IntVar(&overridePort, "port", 0, "Override port")
+	flag.IntVar(&lostWriteRate, "lose-writes", 0, "Simulate unreliable database with 1 in N chance of silently dropping the write")
 	flag.Parse()
 
 	if test != "" {

@@ -20,11 +20,11 @@ type configFile struct {
 	compression bool
 
 	// default: sqlite
-	// can be redis
+	// can be redis or redis-cluster
 	database string
 
 	// default: localhost:6379
-	redisServer   string
+	redisServers  []string
 	redisPassword string
 
 	secretUser     string
@@ -51,7 +51,6 @@ func readConfFile() (configFile, error) {
 	config.bindAddress = "0.0.0.0"
 	config.port = 3000
 	config.database = "sqlite"
-	config.redisServer = "localhost:6379"
 	config.compression = true
 
 	confPath := "/etc/zwibbler.conf"
@@ -108,13 +107,13 @@ func readConfFile() (configFile, error) {
 				}
 			case "Database":
 				switch value {
-				case "redis", "sqlite":
+				case "redis", "redis-cluster", "sqlite":
 					config.database = value
 				default:
 					log.Printf("Error: Unknown database type %s, must be redis,sqlite", value)
 				}
 			case "RedisServer":
-				config.redisServer = value
+				config.redisServers = append(config.redisServers, value)
 			case "RedisPassword":
 				config.redisPassword = value
 			case "Compression":
@@ -138,6 +137,10 @@ func readConfFile() (configFile, error) {
 				}
 			}
 		}
+	}
+
+	if len(config.redisServers) == 0 {
+		config.redisServers = []string{"localhost:6379"}
 	}
 
 	return config, nil
