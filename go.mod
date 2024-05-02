@@ -8,7 +8,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/gorilla/websocket v1.5.0
 	github.com/kardianos/service v1.1.0
-	github.com/smhanov/zwibserve v0.0.0-20231011211758-2b6f0e54bcc5
+	github.com/smhanov/zwibserve v0.0.0-20240502203354-7846f06df9f2
 )
 
 //replace github.com/smhanov/zwibserve v0.0.0-20231011211758-2b6f0e54bcc5 => ./zwibserve
