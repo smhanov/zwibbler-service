@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# Set the URL to check.
+# PLEASE MODIFY THIS TO BE THE URL ACCESSIBLE THROUGH NGINX
+TARGET_URL="http://localhost:3000/socket?ping"
+
+# Specify the services to restart
+SERVICES_TO_RESTART="nginx zwibbler"
+
+# Set the timeout in seconds
+TIMEOUT=60
+
+# Function to install the script as a systemd service
+install_service() {
+    # Get the path to the currently executing script
+    SCRIPT_PATH="$(realpath $0)"
+    # Create a systemd service file
+    cat <<EOF > /etc/systemd/system/zwibbler-watchdog.service
+[Unit]
+Description=Zwibbler Watchdog Service
+
+[Service]
+ExecStart=$SCRIPT_PATH
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    # Reload systemd daemon
+    systemctl daemon-reload
+
+    # Enable and start the service
+    systemctl enable zwibbler-watchdog
+    systemctl start zwibbler-watchdog
+
+    echo "Zwibbler Watchdog service installed and started."
+}
+
+# Function to uninstall the script as a systemd service
+uninstall_service() {
+    # Stop and disable the service
+    systemctl stop zwibbler-watchdog
+    systemctl disable zwibbler-watchdog
+
+    # Remove the systemd service file
+    rm /etc/systemd/system/zwibbler-watchdog.service
+
+    echo "Zwibbler Watchdog service uninstalled."
+}
+
+# Check if the command line parameter "-install" or "--install" is provided
+if [[ "$1" == "-install" || "$1" == "--install" ]]; then
+    install_service
+    exit 0
+fi
+
+# Check if the command line parameter "-uninstall" or "--uninstall" is provided
+if [[ "$1" == "-uninstall" || "$1" == "--uninstall" ]]; then
+    uninstall_service
+    exit 0
+fi
+
+# Infinite loop
+while true; do
+    # Check if the URL is accessible
+    if curl --max-time 10 -s --fail "$TARGET_URL" > /dev/null; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] $TARGET_URL is accessible." || logger
+    else
+        # Log to /var/log/zwibbler.conf
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] $TARGET_URL is not accessible. Restarting services: $SERVICES_TO_RESTART..." logger
+
+        # Restart specified services
+        systemctl restart $SERVICES_TO_RESTART
+        echo "Zwibbler services restarted."
+    fi
+
+    # Sleep before checking again
+    sleep $TIMEOUT
+done
