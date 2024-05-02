@@ -15,6 +15,9 @@ import (
 var overridePort int
 var lostWriteRate int
 
+var BuildDate string // set by build script
+var Version string   // set by build script
+
 func main() {
 	var install bool
 	var uninstall bool
@@ -23,6 +26,7 @@ func main() {
 	var students int
 	var doc string
 	var verbose bool
+	var version bool
 
 	flag.BoolVar(&install, "install", false, "Install")
 	flag.BoolVar(&uninstall, "uninstall", false, "Uninstall")
@@ -33,7 +37,13 @@ func main() {
 	flag.BoolVar(&verbose, "verbose", false, "Verbose server")
 	flag.IntVar(&overridePort, "port", 0, "Override port")
 	flag.IntVar(&lostWriteRate, "lose-writes", 0, "Simulate unreliable database with 1 in N chance of silently dropping the write")
+	flag.BoolVar(&version, "version", false, "Display version and exit")
 	flag.Parse()
+
+	if version {
+		fmt.Printf("Zwibbler Collaboration Server Version %s Built on %s\n", Version, BuildDate)
+		return
+	}
 
 	if test != "" {
 		if doc == "" {

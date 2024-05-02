@@ -1,11 +1,12 @@
 
-VERSION := 11.0
+VERSION := 12.0
 NAME := zwibbler_$(VERSION)
 
 RPM_NAME := zwibbler-$(VERSION)-1.x86_64.rpm
 
+
 zwibbler: *.go
-	go build -tags "$(TAGS)"
+	go build -tags "$(TAGS)" -ldflags "-X \"main.BuildDate=$(shell date -u '+%Y-%m-%d %H:%M:%S')\" -X \"main.Version=$(VERSION)\""
 
 hae: *.go zwibserve/*.go
 	make TAGS=hae
