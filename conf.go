@@ -27,8 +27,7 @@ type configFile struct {
 	redisServers  []string
 	redisPassword string
 
-	dbPort     int
-	dbHost     string
+	dbServers  []string
 	dbUser     string
 	dbPassword string
 
@@ -115,17 +114,14 @@ func readConfFile() (configFile, error) {
 				case "redis", "redis-cluster", "sqlite", "postgres", "mysql", "mariadb":
 					config.database = value
 				default:
-					log.Printf("Error: Unknown database type %s, must be redis,sqlite", value)
+					log.Printf("Error: Unknown database type %s, must be redis, sqlite, postgres, mysql, or mariadb", value)
 				}
 			case "RedisServer":
-				config.redisServers = append(config.redisServers, value)
+				config.dbServers = append(config.dbServers, value)
 			case "RedisPassword":
-				config.redisPassword = value
-			case "DbPort":
-				i, _ := strconv.ParseInt(value, 10, 32)
-				config.dbPort = int(i)
-			case "DbHost":
-				config.dbHost = value
+				config.dbPassword = value
+			case "DbServer":
+				config.dbServers = append(config.dbServers, value)
 			case "DbUser":
 				config.dbUser = value
 			case "DbPassword":
@@ -154,7 +150,16 @@ func readConfFile() (configFile, error) {
 	}
 
 	if len(config.redisServers) == 0 {
-		config.redisServers = []string{"localhost:6379"}
+		switch config.database {
+		case "redis":
+			config.dbServers = []string{"localhost:6379"}
+		case "mysql":
+			config.dbServers = []string{"localhost:3306"}
+		case "postgres":
+			config.dbServers = []string{"localhost:5432"}
+		case "mariadb":
+			config.dbServers = []string{"localhost:3306"}
+		}
 	}
 
 	return config, nil

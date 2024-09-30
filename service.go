@@ -48,25 +48,25 @@ func (p *program) run() {
 		log.Printf("Database path is %s", dbpath+"zwibbler.db")
 		db = zwibserve.NewSQLITEDB(dbpath + "zwibbler.db")
 	case "postgres":
-		log.Printf("Using Postgres SQL")
-		db = zwibserve.NewPostgreSQLConnection(config.dbPort, config.dbHost, config.dbUser, config.dbPassword, "zwibbler")
+		log.Printf("Using PostgresSQL database %s", config.dbServers[0])
+		db = zwibserve.NewPostgreSQLConnection(config.dbServers[0], config.dbUser, config.dbPassword, "zwibbler")
 	case "mysql":
-		log.Printf("Using MySQL")
-		db = zwibserve.NewMySQLConnection(config.dbPort, config.dbHost, config.dbUser, config.dbPassword, "zwibbler")
+		log.Printf("Using MySQL database %s", config.dbServers[0])
+		db = zwibserve.NewMySQLConnection(config.dbServers[0], config.dbUser, config.dbPassword, "zwibbler")
 	case "mariadb":
-		log.Printf("Using MariaDB")
-		db = zwibserve.NewMariaDBConnection(config.dbPort, config.dbHost, config.dbUser, config.dbPassword, "zwibbler")
+		log.Printf("Using MariaDB database %s", config.dbServers[0])
+		db = zwibserve.NewMariaDBConnection(config.dbServers[0], config.dbUser, config.dbPassword, "zwibbler")
 	case "redis":
-		log.Printf("Using Redis DB %s", config.redisServers)
+		log.Printf("Using Redis DB %s", config.dbServers[0])
 		db = zwibserve.NewRedisDB(&redis.Options{
-			Addr:     config.redisServers[0],
-			Password: config.redisPassword,
+			Addr:     config.dbServers[0],
+			Password: config.dbPassword,
 		})
 	case "redis-cluster":
-		log.Printf("Using Redis Cluster DB %v", config.redisServers)
+		log.Printf("Using Redis Cluster DB %v", config.dbServers)
 		db = zwibserve.NewRedisClusterDB(&redis.ClusterOptions{
-			Addrs:    config.redisServers,
-			Password: config.redisPassword,
+			Addrs:    config.dbServers,
+			Password: config.dbPassword,
 		})
 	}
 
