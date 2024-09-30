@@ -27,6 +27,11 @@ type configFile struct {
 	redisServers  []string
 	redisPassword string
 
+	dbPort     int
+	dbHost     string
+	dbUser     string
+	dbPassword string
+
 	secretUser     string
 	secretPassword string
 
@@ -107,7 +112,7 @@ func readConfFile() (configFile, error) {
 				}
 			case "Database":
 				switch value {
-				case "redis", "redis-cluster", "sqlite":
+				case "redis", "redis-cluster", "sqlite", "postgres", "mysql", "mariadb":
 					config.database = value
 				default:
 					log.Printf("Error: Unknown database type %s, must be redis,sqlite", value)
@@ -116,6 +121,15 @@ func readConfFile() (configFile, error) {
 				config.redisServers = append(config.redisServers, value)
 			case "RedisPassword":
 				config.redisPassword = value
+			case "DbPort":
+				i, _ := strconv.ParseInt(value, 10, 32)
+				config.dbPort = int(i)
+			case "DbHost":
+				config.dbHost = value
+			case "DbUser":
+				config.dbUser = value
+			case "DbPassword":
+				config.dbPassword = value
 			case "Compression":
 				value = strings.ToLower(value)
 				config.compression = isTrue(value)

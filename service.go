@@ -47,6 +47,15 @@ func (p *program) run() {
 	case "sqlite":
 		log.Printf("Database path is %s", dbpath+"zwibbler.db")
 		db = zwibserve.NewSQLITEDB(dbpath + "zwibbler.db")
+	case "postgres":
+		log.Printf("Using Postgres SQL")
+		db = zwibserve.NewPostgreSQLConnection(config.dbPort, config.dbHost, config.dbUser, config.dbPassword, "zwibbler")
+	case "mysql":
+		log.Printf("Using MySQL")
+		db = zwibserve.NewMySQLConnection(config.dbPort, config.dbHost, config.dbUser, config.dbPassword, "zwibbler")
+	case "mariadb":
+		log.Printf("Using MariaDB")
+		db = zwibserve.NewMariaDBConnection(config.dbPort, config.dbHost, config.dbUser, config.dbPassword, "zwibbler")
 	case "redis":
 		log.Printf("Using Redis DB %s", config.redisServers)
 		db = zwibserve.NewRedisDB(&redis.Options{
