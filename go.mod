@@ -1,4 +1,4 @@
-module zwibbler.com/zwibbler
+module github.com/smhanov/zwibbler-service
 
 go 1.14
 
@@ -10,7 +10,7 @@ require (
 	github.com/gorilla/websocket v1.5.0
 	github.com/kardianos/service v1.1.0
 	github.com/lib/pq v1.10.9 // indirect
-	github.com/smhanov/zwibserve v0.0.0-20240502203354-7846f06df9f2
+	github.com/smhanov/zwibserve v0.0.0-20250508212020-496ba7063aa7
 )
 
 //replace github.com/smhanov/zwibserve v0.0.0-20231011211758-2b6f0e54bcc5 => ./zwibserve
